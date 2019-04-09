@@ -3,6 +3,8 @@
 namespace app\models;
 
 use Yii;
+use yii\validators\FilterValidator;
+use yii\validators\StringValidator;
 
 /**
  * This is the model class for table "product".
@@ -30,7 +32,12 @@ class Product extends \yii\db\ActiveRecord
         return [
             [['name', 'price', 'created_at'], 'required'],
             [['created_at'], 'integer'],
-            [['name', 'price'], 'string', 'max' => 50],
+            [['price'], 'integer', 'min' => 0, 'max' => 1000],
+            [['name'], StringValidator::class, 'max' => 20],
+            [['name'], FilterValidator::class, 'filter' => function ($value) {
+                $value = trim($value);
+                return strip_tags($value);
+            }],
         ];
     }
 
