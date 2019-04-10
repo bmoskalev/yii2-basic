@@ -16,6 +16,9 @@ use yii\validators\StringValidator;
  */
 class Product extends \yii\db\ActiveRecord
 {
+    const SCENARIO_CREATE = 'createScenario';
+    const SCENARIO_UPDATE = 'updateScenario';
+
     /**
      * {@inheritdoc}
      */
@@ -38,6 +41,15 @@ class Product extends \yii\db\ActiveRecord
                 $value = trim($value);
                 return strip_tags($value);
             }],
+        ];
+    }
+
+    public function scenarios()
+    {
+        return [
+            self::SCENARIO_DEFAULT => ['name'],
+            self::SCENARIO_CREATE => ['name', 'price','created_at'],
+            self::SCENARIO_UPDATE => ['!name','price','created_at']
         ];
     }
 
