@@ -65,7 +65,7 @@ class TestController extends Controller
             ->all();
         var_dump($data2);
         $query = new Query();
-        $data3 = $query->from('user')->count('*');
+        $data3 = $query->from('user')->count();
         var_dump($data3);
         $query = new Query();
         $data4 = $query->from('task')->select('*')
