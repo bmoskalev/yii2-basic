@@ -42,9 +42,9 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
     public function rules()
     {
         return [
-            [['username', 'password_hash','password'], 'required'],
+            [['username', 'password'], 'required'],
             [['creator_id', 'updater_id', 'created_at', 'updated_at'], 'integer'],
-            [['username', 'password_hash','auth_key'], 'string', 'max' => 255],
+            [['username', 'auth_key'], 'string', 'max' => 255],
         ];
     }
 
@@ -154,27 +154,23 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
         return $this->getAuthKey() == $authKey;
     }
 
-//    public function beforeSave($insert)
-//    {
-//        if (parent::beforeSave($insert)) {
-//            if ($this->password) {
-//                $this->password_hash = Yii::$app->getSecurity()->generatePasswordHash($this->password);
-//            }
-//            if ($this->isNewRecord) {
-//                $this->auth_key = Yii::$app->security->generateRandomString();
-//            }
-//            return true;
-//        }
-//        return false;
-//    }
+    public function beforeSave($insert)
+    {
+        if (parent::beforeSave($insert)) {
+            if ($this->password) {
+                $this->password_hash = Yii::$app->getSecurity()->generatePasswordHash($this->password);
+            }
+            if ($this->isNewRecord) {
+                $this->auth_key = Yii::$app->security->generateRandomString();
+            }
+            return true;
+        }
+        return false;
+    }
 
     public function validatePassword($password)
     {
-        if (Yii::$app->getSecurity()->validatePassword($password, $this->password_hash)) {
-            // всё хорошо, пользователь может войти
-        } else {
-            // неправильный пароль
-        }
+        return Yii::$app->getSecurity()->validatePassword($password, $this->password_hash);
     }
 
     /**
