@@ -153,10 +153,9 @@ class UserController extends Controller
 //            $user->password_hash = Yii::$app->getSecurity()->generatePasswordHash($user->password_hash);
 //            $user->save();
 //        }
-        $users = User::find()->all();
-        foreach($users as $user)
-        {
-            $user->password_hash = \Yii::$app->getSecurity()->generatePasswordHash($user->password_hash);
+        for ($i = 1; $i < 6; $i++) {
+            $user = User::findOne($i);
+            $user->password_hash = Yii::$app->getSecurity()->generatePasswordHash($user->password_hash);
             $user->save();
         }
     }
