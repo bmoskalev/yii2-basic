@@ -3,12 +3,15 @@
 namespace app\models;
 
 use Yii;
+use yii\behaviors\TimestampBehavior;
+use yii\web\IdentityInterface;
 
 /**
  * This is the model class for table "user".
  *
  * @property int $id
  * @property string $username
+ * @property string $password
  * @property string $password_hash
  * @property string $auth_key
  * @property int $creator_id
@@ -20,9 +23,10 @@ use Yii;
  * @property Task[] $tasks0
  * @property TaskUser[] $taskUsers
  */
-class User extends \yii\db\ActiveRecord
+class User extends \yii\db\ActiveRecord implements IdentityInterface
 {
     const RELATION_TASKS = 'tasks';
+    public $password;
 
     /**
      * {@inheritdoc}
@@ -38,9 +42,16 @@ class User extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['username', 'password_hash', 'creator_id', 'created_at'], 'required'],
+            [['username', 'password_hash','password'], 'required'],
             [['creator_id', 'updater_id', 'created_at', 'updated_at'], 'integer'],
-            [['username', 'password_hash', 'auth_key'], 'string', 'max' => 255],
+            [['username', 'password_hash','auth_key'], 'string', 'max' => 255],
+        ];
+    }
+
+    public function behaviors()
+    {
+        return [
+            TimestampBehavior::class
         ];
     }
 
@@ -92,5 +103,88 @@ class User extends \yii\db\ActiveRecord
     public static function find()
     {
         return new \app\models\query\UserQuery(get_called_class());
+    }
+
+    /**
+     * Finds an identity by the given ID.
+     *
+     * @param string|int $id the ID to be looked for
+     * @return IdentityInterface|null the identity object that matches the given ID.
+     */
+    public static function findIdentity($id)
+    {
+        return static::findOne($id);
+    }
+
+    /**
+     * Finds an identity by the given token.
+     *
+     * @param string $token the token to be looked for
+     * @return IdentityInterface|null the identity object that matches the given token.
+     */
+    public static function findIdentityByAccessToken($token, $type = null)
+    {
+        return static::findOne(['access_token' => $token]);
+    }
+
+
+    /**
+     * @return int|string current user ID
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * @return string current user auth key
+     */
+    public function getAuthKey()
+    {
+        return $this->auth_key;
+    }
+
+
+    /**
+     * @param string $authKey
+     * @return bool if auth key is valid for current user
+     */
+    public function validateAuthKey($authKey)
+    {
+        return $this->getAuthKey() == $authKey;
+    }
+
+//    public function beforeSave($insert)
+//    {
+//        if (parent::beforeSave($insert)) {
+//            if ($this->password) {
+//                $this->password_hash = Yii::$app->getSecurity()->generatePasswordHash($this->password);
+//            }
+//            if ($this->isNewRecord) {
+//                $this->auth_key = Yii::$app->security->generateRandomString();
+//            }
+//            return true;
+//        }
+//        return false;
+//    }
+
+    public function validatePassword($password)
+    {
+        if (Yii::$app->getSecurity()->validatePassword($password, $this->password_hash)) {
+            // всё хорошо, пользователь может войти
+        } else {
+            // неправильный пароль
+        }
+    }
+
+    /**
+     * Finds user by username
+     *
+     * @param string $username
+     * @return static|null
+     */
+    public static function findByUsername($username)
+    {
+        return self::findOne(['username' => $username]);
     }
 }

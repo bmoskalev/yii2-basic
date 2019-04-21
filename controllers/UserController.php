@@ -5,6 +5,7 @@ namespace app\controllers;
 use app\models\Task;
 use Yii;
 use app\models\User;
+use yii\base\Exception;
 use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -112,40 +113,51 @@ class UserController extends Controller
 
     public function actionTest()
     {
-        $user = new User();
-        $user->username = "Anton";
-        $user->password_hash = "18273645";
-        $user->creator_id = 2;
-        $user->created_at = time();
-        _end($user->save());
-        $user = User::findOne(5);
-        $task = new Task();
-        $task->title = "Bulb";
-        $task->description = "Buy bulb for my lamp";
-        $task->created_at = time();
-        $task->link(Task::RELATION_CREATOR, $user);
-        $user = User::findOne(3);
-        $task = new Task();
-        $task->title = "Vacation";
-        $task->description = "buy plane tickets";
-        $task->created_at = time();
-        $task->link(Task::RELATION_CREATOR, $user);
-        $user = User::findOne(4);
-        $task = new Task();
-        $task->title = "Hospital";
-        $task->description = "Visit ant in hospital";
-        $task->created_at = time();
-        $task->link(Task::RELATION_CREATOR, $user);
-        $models=User::find()->with(User::RELATION_TASKS)->all();
-        foreach ($models as $model){
-            var_dump($model);
+//        $user = new User();
+//        $user->username = "Anton";
+//        $user->password_hash = "18273645";
+//        $user->creator_id = 2;
+//        $user->created_at = time();
+//        _end($user->save());
+//        $user = User::findOne(5);
+//        $task = new Task();
+//        $task->title = "Bulb";
+//        $task->description = "Buy bulb for my lamp";
+//        $task->created_at = time();
+//        $task->link(Task::RELATION_CREATOR, $user);
+//        $user = User::findOne(3);
+//        $task = new Task();
+//        $task->title = "Vacation";
+//        $task->description = "buy plane tickets";
+//        $task->created_at = time();
+//        $task->link(Task::RELATION_CREATOR, $user);
+//        $user = User::findOne(4);
+//        $task = new Task();
+//        $task->title = "Hospital";
+//        $task->description = "Visit ant in hospital";
+//        $task->created_at = time();
+//        $task->link(Task::RELATION_CREATOR, $user);
+//        $models=User::find()->with(User::RELATION_TASKS)->all();
+//        foreach ($models as $model){
+//            var_dump($model);
+//        }
+//        $models=User::find()->joinWith(User::RELATION_TASKS)->all();
+//        foreach ($models as $model){
+//            var_dump($model);
+//        }
+//        $task=Task::findOne(1);
+//        _end($task->getAccessedUsers()->all());
+//        for ($i = 1; $i < 6; $i++) {
+//            $user = User::find()->where(['id'=>$i])->one();
+//            $user->password_hash = Yii::$app->getSecurity()->generatePasswordHash($user->password_hash);
+//            $user->save();
+//        }
+        $users = User::find()->all();
+        foreach($users as $user)
+        {
+            $user->password_hash = \Yii::$app->getSecurity()->generatePasswordHash($user->password_hash);
+            $user->save();
         }
-        $models=User::find()->joinWith(User::RELATION_TASKS)->all();
-        foreach ($models as $model){
-            var_dump($model);
-        }
-        $task=Task::findOne(1);
-        _end($task->getAccessedUsers()->all());
     }
 
     /**
