@@ -51,7 +51,14 @@ class Task extends \yii\db\ActiveRecord
     public function behaviors()
     {
         return [
-            TimestampBehavior::class
+            [
+                'class' => TimestampBehavior::class,
+            ],
+            [
+                'class' => BlameableBehavior::class,
+                'createdByAttribute' => 'creator_id',
+                'updatedByAttribute' => 'updater_id'
+            ]
         ];
     }
 
@@ -103,6 +110,7 @@ class Task extends \yii\db\ActiveRecord
         return $this->hasMany(TaskUser::className(), ['id' => 'user_id'])
             ->via(self::RELATION_TASK_USERS);
     }
+
     /**
      * {@inheritdoc}
      * @return \app\models\query\TaskQuery the active query used by this AR class.

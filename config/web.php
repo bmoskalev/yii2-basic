@@ -48,7 +48,12 @@ $config = [
                 'levels' => ['info'],
                 'categories' => '_',
             ],
-
+            [
+                'class' => 'yii\log\FileTarget',
+                'levels' => ['info'],
+                'categories' => 'login',
+                'logFile' => '@runtime/logs/login.log'
+            ],
         ],
     ],
     'db' => $db,
