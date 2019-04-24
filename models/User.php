@@ -28,7 +28,8 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
 {
     const RELATION_TASKS = 'tasks';
     public $password;
-
+    const SCENARIO_CREATE = 'createScenario';
+    const SCENARIO_UPDATE = 'updateScenario';
     /**
      * {@inheritdoc}
      */
@@ -43,8 +44,8 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
     public function rules()
     {
         return [
-            [['username', 'password'], 'required', 'on' => 'create'],
-            [['username'], 'required', 'on' => 'update'],
+            [['username', 'password'], 'required', 'on' => self::SCENARIO_CREATE],
+            [['username'], 'required', 'on' => self::SCENARIO_UPDATE],
             [['creator_id', 'updater_id', 'created_at', 'updated_at'], 'integer'],
             [['username', 'auth_key'], 'string', 'max' => 255],
         ];

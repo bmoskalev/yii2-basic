@@ -11,10 +11,14 @@ use yii\db\ActiveQuery;
  */
 class TaskQuery extends ActiveQuery
 {
-    /*public function active()
+    /**
+     * @param $userId
+     * @return TaskQuery
+     */
+    public function byCreator($userId)
     {
-        return $this->andWhere('[[status]]=1');
-    }*/
+        return $this->andWhere(['creator_id' => $userId]);
+    }
 
     /**
      * {@inheritdoc}
