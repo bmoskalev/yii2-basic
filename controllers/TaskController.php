@@ -50,7 +50,7 @@ class TaskController extends Controller
             'query' => $query,
         ]);
 
-        return $this->render('index', [
+        return $this->render('my', [
             'dataProvider' => $dataProvider,
         ]);
     }
