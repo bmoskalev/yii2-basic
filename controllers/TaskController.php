@@ -43,6 +43,21 @@ class TaskController extends Controller
      * Lists all Task models.
      * @return mixed
      */
+    public function actionIndex()
+    {
+        $dataProvider = new ActiveDataProvider([
+            'query' => Task::find(),
+        ]);
+
+        return $this->render('index', [
+            'dataProvider' => $dataProvider,
+        ]);
+    }
+
+    /**
+     * Lists all Task models.
+     * @return mixed
+     */
     public function actionMy()
     {
         $query=Task::find()->byCreator(\Yii::$app->user->id);
