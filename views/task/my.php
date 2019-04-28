@@ -7,10 +7,10 @@ use yii\widgets\Pjax;
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = 'Tasks';
+$this->title = 'My';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="task-index">
+<div class="task-my">
 
     <h1><?= Html::encode($this->title) ?></h1>
 
@@ -23,21 +23,17 @@ $this->params['breadcrumbs'][] = $this->title;
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'columns' => [
-            ['class' => 'yii\grid\SerialColumn'],
 
-//            'id',
             'title',
             'description:ntext',
-//            'creator_id',
-//            'updater_id',
             'created_at',
             'updated_at',
 
             ['class' => 'yii\grid\ActionColumn',
                 'template' => '{view} {update} {delete} {share}',
                 'buttons' => [
-                    'share' => function ($model) {
-                        $icon = \yii\bootstrap\Html::icon('link');
+                    'share' => function ($url, $model, $key) {
+                        $icon = \yii\bootstrap\Html::icon('share');
                         return Html::a($icon, ['task-user/create', 'taskId' => $model->id]);
                     },
                 ]

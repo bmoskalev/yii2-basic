@@ -3,6 +3,7 @@
 namespace app\controllers;
 
 use app\models\Task;
+use app\models\User;
 use Yii;
 use app\models\TaskUser;
 use yii\data\ActiveDataProvider;
@@ -85,7 +86,7 @@ class TaskUserController extends Controller
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             \Yii::$app->session->setFlash('success', 'Creation completed');
-            return $this->redirect(['view', 'id' => $model->id]);
+            return $this->redirect(['task/my']);
         }
 
         $users = User::find()
