@@ -36,37 +36,10 @@ class TaskUserController extends Controller
                 'class' => VerbFilter::className(),
                 'actions' => [
                     'delete' => ['POST'],
+                    'delete-all' => ['POST'],
                 ],
             ],
         ];
-    }
-
-    /**
-     * Lists all TaskUser models.
-     * @return mixed
-     */
-    public function actionIndex()
-    {
-        $dataProvider = new ActiveDataProvider([
-            'query' => TaskUser::find(),
-        ]);
-
-        return $this->render('index', [
-            'dataProvider' => $dataProvider,
-        ]);
-    }
-
-    /**
-     * Displays a single TaskUser model.
-     * @param integer $id
-     * @return mixed
-     * @throws NotFoundHttpException if the model cannot be found
-     */
-    public function actionView($id)
-    {
-        return $this->render('view', [
-            'model' => $this->findModel($id),
-        ]);
     }
 
     /**
@@ -86,7 +59,7 @@ class TaskUserController extends Controller
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             \Yii::$app->session->setFlash('success', 'Creation completed');
-            return $this->redirect(['task/my']);
+            return $this->redirect(['task/my', 'id' => $model->id]);
         }
 
         $users = User::find()
@@ -102,23 +75,19 @@ class TaskUserController extends Controller
     }
 
     /**
-     * Updates an existing TaskUser model.
-     * If update is successful, the browser will be redirected to the 'view' page.
+     * Deletes an existing TaskUser model.
+     * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param integer $id
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
+     * @throws \Throwable
+     * @throws \yii\db\StaleObjectException
      */
-    public function actionUpdate($id)
+    public function actionDelete($id)
     {
-        $model = $this->findModel($id);
+        $this->findModel($id)->delete();
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
-        }
-
-        return $this->render('update', [
-            'model' => $model,
-        ]);
+        return $this->redirect(['index']);
     }
 
     /**
@@ -126,13 +95,18 @@ class TaskUserController extends Controller
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param integer $id
      * @return mixed
-     * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionDelete($id)
+    public function actionDeleteAll($id)
     {
-        $this->findModel($id)->delete();
+        $model = Task::findOne($id);
+        if (!$model || $model->creator_id !== \Yii::$app->user->id) {
+            throw new ForbiddenHttpException();
+        }
 
-        return $this->redirect(['index']);
+        $model->unlinkAll(Task::RELATION_SHARED_USERS, true);
+        \Yii::$app->session->setFlash('success', 'Delete succeeded');
+
+        return $this->redirect(['task/my']);
     }
 
     /**

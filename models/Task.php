@@ -25,6 +25,7 @@ class Task extends \yii\db\ActiveRecord
 {
     const RELATION_CREATOR = 'creator';
     const RELATION_TASK_USERS = 'taskUsers';
+    const RELATION_SHARED_USERS = 'sharedUsers';
 
     /**
      * {@inheritdoc}
@@ -112,6 +113,14 @@ class Task extends \yii\db\ActiveRecord
             ->via(self::RELATION_TASK_USERS);
     }
 
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getSharedUsers()
+    {
+        return $this->hasMany(User::className(), ['id' => 'user_id'])
+            ->via(self::RELATION_TASK_USERS);
+    }
     /**
      * {@inheritdoc}
      * @return \app\models\query\TaskQuery the active query used by this AR class.
